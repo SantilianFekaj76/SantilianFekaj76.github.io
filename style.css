@@ -355,3 +355,57 @@ footer {
     width: 100%;
   }
 }
+
+/* ==============================
+   MOBILE FIXES — ALL PAGES
+   ============================== */
+@media (max-width: 768px) {
+
+  /* BESPOKE PAGE */
+  .bespoke-intro {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+    padding: 3rem 5% !important;
+  }
+  .bespoke-visual {
+    aspect-ratio: 4/3 !important;
+  }
+  .options-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .bespoke-cta-steps {
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
+  }
+  .cta-step-line { display: none !important; }
+
+  /* COLLECTIONS PAGE */
+  .filter-wrap {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.8rem !important;
+  }
+  .compare-hint { display: none !important; }
+  .collections-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .collection-card {
+    aspect-ratio: 3/4 !important;
+  }
+  .qv-panel {
+    grid-template-columns: 1fr !important;
+  }
+  .qv-visual { min-height: 220px !important; }
+  .compare-drawer {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  .compare-slots { flex-direction: column !important; }
+  .compare-slot { max-width: 100% !important; }
+  .cmp-panel { padding: 2rem 1rem !important; }
+  .cmp-row { grid-template-columns: 1fr 1fr !important; }
+  .cmp-cell.label { display: none !important; }
+
+  /* SECTION LABEL spacing */
+  .section-label { letter-spacing: 0.3em !important; }
+}
