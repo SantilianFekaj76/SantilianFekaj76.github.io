@@ -152,6 +152,50 @@
       margin: 0 1rem;
       margin-bottom: 1.4rem;
     }
+
+    /* ---- MOBILE OVERRIDES ---- */
+    @media (max-width: 768px) {
+      /* Two-column intro → single column, suit visual below text */
+      .bespoke-intro {
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem !important;
+        padding: 3rem 5% !important;
+      }
+      /* Shrink suit visual so it doesn't overlap text */
+      .bespoke-visual {
+        aspect-ratio: 4/3 !important;
+        max-height: 320px !important;
+      }
+      /* Options: 2-col on mobile (4-col is too cramped) */
+      .options-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .options-section {
+        padding: 3rem 5% !important;
+      }
+      .option-item {
+        padding: 1.8rem 1.2rem !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(201,168,76,0.08) !important;
+      }
+      /* CTA steps: wrap and hide connector lines */
+      .bespoke-cta-steps {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 1.8rem 2.5rem !important;
+        margin-bottom: 2rem !important;
+      }
+      .cta-step-line {
+        display: none !important;
+      }
+      .bespoke-cta {
+        padding: 4rem 5% !important;
+      }
+      .bespoke-cta .btn-primary {
+        width: 100% !important;
+        text-align: center !important;
+      }
+    }
   </style>
 </head>
 <body>
