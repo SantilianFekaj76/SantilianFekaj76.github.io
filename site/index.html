@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harrow & Black — Premium Tailoring</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ---- HERO ---- */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 75% 50%, rgba(201,168,76,0.05) 0%, transparent 55%),
+        linear-gradient(135deg, #0d0d0d 0%, #090909 50%, #0f0d08 100%);
+    }
+    .hero-panel {
+      position: absolute;
+      pointer-events: none;
+    }
+    .hero-panel-left {
+      top: -10%; left: -5%;
+      width: 42%; height: 130%;
+      background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+      transform: skewX(-8deg);
+      border-right: 1px solid rgba(201,168,76,0.12);
+    }
+    .hero-panel-right {
+      top: -10%; right: -5%;
+      width: 38%; height: 130%;
+      background: linear-gradient(-135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+      transform: skewX(-8deg);
+      border-left: 1px solid rgba(201,168,76,0.08);
+    }
+    .hero-gold-line { display: none; }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+    .hero-eyebrow {
+      font-size: 0.58rem;
+      letter-spacing: 0.6em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: riseIn 1s ease forwards 0.3s;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(4rem, 11vw, 9rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: riseIn 1.2s ease forwards 0.5s;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-subtitle {
+      margin-top: 2.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(240,236,228,0.45);
+      opacity: 0;
+      animation: riseIn 1.2s ease forwards 0.8s;
+    }
+    .hero-divider {
+      width: 55px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 2.2rem auto;
+      opacity: 0;
+      animation: riseIn 1s ease forwards 1s;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: riseIn 1.2s ease forwards 1.2s;
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: riseIn 1s ease forwards 1.8s;
+      z-index: 2;
+    }
+    .scroll-hint span {
+      font-size: 0.48rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .scroll-line {
+      width: 1px; height: 45px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.4; }
+      50%      { opacity: 1; }
+    }
+
+    /* ---- COLLECTIONS PREVIEW ---- */
+    .collections-preview {
+      padding: 7rem 5%;
+      background: var(--dark);
+    }
+    .collections-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3.5rem;
+    }
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .collection-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+    .card-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .collection-card:hover .card-bg { transform: scale(1.05); }
+    .bg-1 { background: linear-gradient(160deg, #1a1610 0%, #0d0b07 60%, #181410 100%); }
+    .bg-2 { background: linear-gradient(160deg, #0e1318 0%, #080c0f 60%, #101518 100%); }
+    .bg-3 { background: linear-gradient(160deg, #14100e 0%, #0c0a08 60%, #131109 100%); }
+    .card-pattern {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, rgba(201,168,76,0.025) 0px, rgba(201,168,76,0.025) 1px, transparent 1px, transparent 22px);
+    }
+    .card-corner {
+      position: absolute;
+      width: 28px; height: 28px;
+      pointer-events: none;
+      transition: width 0.4s, height 0.4s;
+    }
+    .collection-card:hover .card-corner { width: 38px; height: 38px; }
+    .card-corner.tl { top: 1rem; left: 1rem; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+    .card-corner.br { bottom: 1rem; right: 1rem; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+    .suit-icon {
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 68%; opacity: 0.12;
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .collection-card:hover .suit-icon { transform: translateX(-50%) scale(1.04); opacity: 0.28; }
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: rgba(201,168,76,0.04);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .collection-card:hover .card-overlay { opacity: 1; }
+    .card-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 2.5rem 1.8rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    }
+    .card-tag {
+      font-size: 0.48rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+    }
+    .card-price {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(240,236,228,0.45);
+      margin-top: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="gold-lines-bg"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-panel hero-panel-left"></div>
+    <div class="hero-panel hero-panel-right"></div>
+    <div class="hero-gold-line hero-gold-line-1"></div>
+    <div class="hero-gold-line hero-gold-line-2"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Est. 1987 · London · Savile Row</p>
+      <h1 class="hero-title">Dressed<br>for <em>Power</em></h1>
+      <p class="hero-subtitle">Hand-crafted suits for those who command</p>
+      <div class="hero-divider"></div>
+      <div class="hero-actions">
+        <a href="collections.html" class="btn-primary">Explore Collection</a>
+        <a href="contact.html" class="btn-ghost">Book Fitting</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+
+
+  <!-- COLLECTIONS PREVIEW -->
+  <section class="collections-preview">
+    <div class="collections-header reveal">
+      <div>
+        <p class="section-label">The Collection</p>
+        <h2 class="section-title">Tailored for <em>Excellence</em></h2>
+      </div>
+      <a href="collections.html" class="btn-ghost">View All</a>
+    </div>
+    <div class="collections-grid">
+      <div class="collection-card">
+        <div class="card-bg bg-1"></div>
+        <div class="card-pattern"></div>
+        <div class="card-corner tl"></div>
+        <div class="card-corner br"></div>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M62 0 L44 58 L10 86 L4 200 L38 200 L38 420 L182 420 L182 200 L216 200 L210 86 L176 58 L158 0" fill="white"/>
+          <path d="M158 0 L146 30 L138 26 L110 70 L110 148 L132 165 L182 200" fill="#ccc"/>
+          <path d="M62 0 L74 30 L82 26 L110 70 L110 148 L88 165 L38 200" fill="#d8d8d8"/>
+          <path d="M138 26 L128 40 L118 34 L110 42 L102 34 L92 40 L82 26" fill="#aaa"/>
+          <path d="M110 70 L105 88 L108 158 L110 168 L112 158 L115 88 Z" fill="#777"/>
+          <circle cx="110" cy="188" r="3.5" fill="#999"/>
+          <circle cx="110" cy="207" r="3.5" fill="#999"/>
+          <path d="M48 128 L70 126 L70 134 L48 136 Z" fill="white" opacity="0.4"/>
+          <path d="M52 124 L68 122 L65 130 L58 132 Z" fill="#c9a84c" opacity="0.55"/>
+        </svg>
+        <div class="card-overlay"></div>
+        <div class="card-info">
+          <p class="card-tag">Signature Line</p>
+          <h3 class="card-name">The Obsidian</h3>
+          <p class="card-price">From £ 3,200</p>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="card-bg bg-2"></div>
+        <div class="card-pattern"></div>
+        <div class="card-corner tl"></div>
+        <div class="card-corner br"></div>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M55 0 L36 62 L8 92 L2 205 L36 205 L36 420 L184 420 L184 205 L218 205 L212 92 L184 62 L165 0" fill="white"/>
+          <path d="M165 0 L154 22 L170 38 L154 52 L122 74 L118 148 L142 168 L184 205" fill="#b8b8b8"/>
+          <path d="M165 0 L154 22 L144 18 L118 64 L118 148 L142 168 L184 205" fill="#c8c8c8"/>
+          <path d="M55 0 L66 22 L50 38 L66 52 L98 74 L102 148 L78 168 L36 205" fill="#ccc"/>
+          <path d="M55 0 L66 22 L76 18 L102 64 L102 148 L78 168 L36 205" fill="#d8d8d8"/>
+          <path d="M98 74 L122 74 L120 205 L100 205 Z" fill="#ccc" opacity="0.6"/>
+          <path d="M154 22 L144 36 L134 28 L110 36 L86 28 L76 36 L66 22" fill="#a0a0a0"/>
+          <circle cx="104" cy="155" r="3" fill="#888"/><circle cx="116" cy="155" r="3" fill="#888"/>
+          <circle cx="104" cy="174" r="3" fill="#888"/><circle cx="116" cy="174" r="3" fill="#888"/>
+          <circle cx="104" cy="193" r="3" fill="#888"/><circle cx="116" cy="193" r="3" fill="#888"/>
+          <path d="M46 128 L68 126 L68 136 L46 138 Z" fill="white" opacity="0.35"/>
+          <path d="M48 124 L66 122 L64 129 L55 132 Z" fill="#c9a84c" opacity="0.5"/>
+        </svg>
+        <div class="card-overlay"></div>
+        <div class="card-info">
+          <p class="card-tag">Executive Series</p>
+          <h3 class="card-name">The Sterling</h3>
+          <p class="card-price">From £ 2,800</p>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="card-bg bg-3"></div>
+        <div class="card-pattern"></div>
+        <div class="card-corner tl"></div>
+        <div class="card-corner br"></div>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M62 0 L44 58 L10 86 L4 200 L38 200 L38 420 L182 420 L182 200 L216 200 L210 86 L176 58 L158 0" fill="white"/>
+          <path d="M158 0 L146 24 L130 42 L116 62 L112 148 L138 168 L182 200" fill="#e0e0e0"/>
+          <path d="M158 0 L146 24 L136 36 L116 62 L112 148 L138 168 L182 200" fill="#d0d0d0"/>
+          <path d="M62 0 L74 24 L90 42 L104 62 L108 148 L82 168 L38 200" fill="#d8d8d8"/>
+          <path d="M62 0 L74 24 L84 36 L104 62 L108 148 L82 168 L38 200" fill="#c8c8c8"/>
+          <path d="M136 36 L116 62 L104 62 L84 36 L110 20 Z" fill="#bbb"/>
+          <path d="M98 44 L110 52 L122 44 L126 52 L110 58 L94 52 Z" fill="#111" opacity="0.7"/>
+          <circle cx="110" cy="52" r="3" fill="#222" opacity="0.7"/>
+          <line x1="110" y1="200" x2="110" y2="420" stroke="#c9a84c" stroke-width="2" opacity="0.25"/>
+          <circle cx="110" cy="184" r="3" fill="#c9a84c" opacity="0.8"/>
+          <circle cx="110" cy="198" r="3" fill="#c9a84c" opacity="0.8"/>
+          <path d="M48 130 L70 128 L70 136 L48 138 Z" fill="white" opacity="0.4"/>
+        </svg>
+        <div class="card-overlay"></div>
+        <div class="card-info">
+          <p class="card-tag">Black Label</p>
+          <h3 class="card-name">The Sovereign</h3>
+          <p class="card-price">From £ 4,500</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-item reveal">
+      <div class="stat-number">37</div>
+      <div class="stat-label">Years of Craft</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">8,400+</div>
+      <div class="stat-label">Commissions</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">60+</div>
+      <div class="stat-label">Stitch Points / Inch</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">12</div>
+      <div class="stat-label">Weeks to Completion</div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+</body>
+</html>
