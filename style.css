@@ -238,3 +238,120 @@ footer {
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ==============================
+   MOBILE RESPONSIVE
+   ============================== */
+
+/* Hamburger button — hidden on desktop */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 200;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  transition: all 0.3s;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+
+  /* NAV */
+  nav {
+    padding: 1.4rem 5%;
+  }
+  .nav-hamburger {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(9,9,9,0.98);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    z-index: 150;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .nav-links a {
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+  }
+  .nav-cta {
+    display: none;
+  }
+
+  /* HERO */
+  .hero-title {
+    font-size: clamp(3rem, 15vw, 5rem) !important;
+  }
+  .hero-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* COLLECTIONS GRID */
+  .collections-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .collections-grid {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .collection-card {
+    aspect-ratio: 4/3;
+  }
+
+  /* STATS */
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-item {
+    border-right: none;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+  .stat-item:nth-child(odd) {
+    border-right: 1px solid rgba(201,168,76,0.08);
+  }
+  .stat-number {
+    font-size: 2.2rem;
+  }
+
+  /* FOOTER */
+  footer {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 10rem 5% 4rem;
+  }
+
+  /* BUTTONS */
+  .btn-primary, .btn-ghost {
+    padding: 0.9rem 2rem;
+    text-align: center;
+    width: 100%;
+  }
+}
