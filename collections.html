@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collections — Harrow & Black</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .collections-body { padding: 4rem 5% 8rem; }
+
+    /* ---- STICKY FILTER BAR ---- */
+    .filter-wrap {
+      position: sticky;
+      top: 72px;
+      z-index: 50;
+      background: rgba(9,9,9,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      padding: 1.2rem 5%;
+      margin: 0 -5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-row { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .filter-btn {
+      font-size: 0.52rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      border: 1px solid rgba(240,236,228,0.12);
+      color: rgba(240,236,228,0.45);
+      background: none;
+      padding: 0.5rem 1.4rem;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s, background 0.3s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+    .compare-hint {
+      font-size: 0.48rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(240,236,228,0.25);
+    }
+    .compare-hint span { color: var(--gold); }
+
+    /* ---- 2-COLUMN GRID ---- */
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+      margin-top: 2.5rem;
+    }
+
+    /* ---- CARD ---- */
+    .collection-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      cursor: pointer;
+      transition: opacity 0.4s;
+    }
+    .collection-card.hidden { display: none; }
+    .collection-card.compare-selected::after {
+      content: '';
+      position: absolute; inset: 0;
+      border: 2px solid var(--gold);
+      pointer-events: none; z-index: 10;
+    }
+    .card-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .collection-card:hover .card-bg { transform: scale(1.04); }
+
+    .bg-sig-1  { background: linear-gradient(160deg, #1c1408 0%, #0e0b05 55%, #1a1308 100%); }
+    .bg-sig-2  { background: linear-gradient(160deg, #1a1206 0%, #100c04 55%, #181106 100%); }
+    .bg-exec-1 { background: linear-gradient(160deg, #0a1018 0%, #060c12 55%, #0d1420 100%); }
+    .bg-exec-2 { background: linear-gradient(160deg, #0c1220 0%, #080e18 55%, #0e1422 100%); }
+    .bg-bl-1   { background: linear-gradient(160deg, #0f0f0f 0%, #080808 55%, #141414 100%); }
+    .bg-bl-2   { background: linear-gradient(160deg, #100d0d 0%, #090707 55%, #160f0f 100%); }
+
+    /* ---- FABRIC TEXTURES ---- */
+    .card-texture { position: absolute; inset: 0; }
+    .tex-herringbone {
+      background-image:
+        repeating-linear-gradient(45deg,  rgba(201,168,76,0.028) 0px, rgba(201,168,76,0.028) 1px, transparent 1px, transparent 8px),
+        repeating-linear-gradient(-45deg, rgba(201,168,76,0.028) 0px, rgba(201,168,76,0.028) 1px, transparent 1px, transparent 8px),
+        repeating-linear-gradient(45deg,  rgba(201,168,76,0.015) 4px, rgba(201,168,76,0.015) 5px, transparent 5px, transparent 16px),
+        repeating-linear-gradient(-45deg, rgba(201,168,76,0.015) 4px, rgba(201,168,76,0.015) 5px, transparent 5px, transparent 16px);
+    }
+    .tex-pinstripe {
+      background-image:
+        repeating-linear-gradient(180deg,
+          transparent 0px, transparent 3px,
+          rgba(201,168,76,0.06) 3px, rgba(201,168,76,0.06) 4px,
+          transparent 4px, transparent 24px),
+        repeating-linear-gradient(180deg,
+          transparent 0px, transparent 11px,
+          rgba(201,168,76,0.03) 11px, rgba(201,168,76,0.03) 12px,
+          transparent 12px, transparent 24px);
+    }
+    .tex-houndstooth {
+      background-image:
+        repeating-linear-gradient(45deg,  rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 2px, transparent 2px, transparent 12px),
+        repeating-linear-gradient(-45deg, rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 2px, transparent 2px, transparent 12px),
+        repeating-linear-gradient(0deg,   rgba(201,168,76,0.02) 0px, rgba(201,168,76,0.02) 1px, transparent 1px, transparent 12px),
+        repeating-linear-gradient(90deg,  rgba(201,168,76,0.02) 0px, rgba(201,168,76,0.02) 1px, transparent 1px, transparent 12px);
+    }
+    .tex-chalkstripe {
+      background-image:
+        repeating-linear-gradient(175deg,
+          transparent 0px, transparent 18px,
+          rgba(240,236,228,0.035) 18px, rgba(240,236,228,0.035) 19px,
+          transparent 19px, transparent 36px);
+    }
+    .tex-gridweave {
+      background-image:
+        repeating-linear-gradient(0deg,  rgba(201,168,76,0.05) 0px, rgba(201,168,76,0.05) 1px, transparent 1px, transparent 28px),
+        repeating-linear-gradient(90deg, rgba(201,168,76,0.05) 0px, rgba(201,168,76,0.05) 1px, transparent 1px, transparent 28px);
+    }
+    .tex-silk {
+      background: linear-gradient(125deg,
+        rgba(240,236,228,0) 0%, rgba(240,236,228,0.04) 25%,
+        rgba(240,236,228,0) 50%, rgba(240,236,228,0.06) 75%,
+        rgba(240,236,228,0) 100%);
+    }
+
+    /* ---- SHIMMER ---- */
+    .card-shimmer {
+      position: absolute; inset: 0;
+      background: linear-gradient(115deg,
+        transparent 0%, transparent 40%,
+        rgba(201,168,76,0.08) 50%,
+        transparent 60%, transparent 100%);
+      background-size: 200% 100%;
+      background-position: -100% 0;
+    }
+    .collection-card:hover .card-shimmer {
+      background-position: 200% 0;
+      transition: background-position 0.7s ease;
+    }
+
+    /* ---- CORNERS ---- */
+    .card-corner {
+      position: absolute; width: 24px; height: 24px;
+      pointer-events: none; transition: width 0.4s, height 0.4s, opacity 0.4s;
+      opacity: 0.5;
+    }
+    .collection-card:hover .card-corner { width: 36px; height: 36px; opacity: 1; }
+    .card-corner.tl { top: 1rem; left: 1rem; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
+    .card-corner.br { bottom: 1rem; right: 1rem; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
+
+    /* ---- SUIT ICON ---- */
+    .suit-icon {
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%); width: 72%;
+      transition: opacity 0.5s, transform 0.7s;
+      opacity: 0.22;
+    }
+    .collection-card:hover .suit-icon { transform: translateX(-50%) scale(1.04); opacity: 0.32; }
+
+    .card-overlay { position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s; }
+    .collection-card:hover .card-overlay { opacity: 1; }
+    .overlay-sig  { background: rgba(201,168,76,0.06); }
+    .overlay-exec { background: rgba(100,140,200,0.05); }
+    .overlay-bl   { background: rgba(200,200,200,0.05); }
+
+    /* ---- COMPARE BADGE ---- */
+    .compare-badge {
+      position: absolute; top: 1rem; right: 1rem; z-index: 5;
+      width: 30px; height: 30px;
+      border: 1px solid rgba(201,168,76,0.3);
+      background: rgba(9,9,9,0.75);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      opacity: 0; transition: border-color 0.3s, background 0.3s, opacity 0.3s;
+    }
+    .collection-card:hover .compare-badge,
+    .compare-badge.selected { opacity: 1; }
+    .compare-badge.selected { border-color: var(--gold); background: rgba(201,168,76,0.15); }
+
+    /* ---- QUICK VIEW BUTTON ---- */
+    .card-quickview {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 5;
+      font-size: 0.46rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--white); background: rgba(9,9,9,0.75);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 0.7rem 1.4rem; cursor: pointer;
+      backdrop-filter: blur(4px); white-space: nowrap;
+    }
+    .collection-card:hover .card-quickview { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+    /* ---- CARD INFO ---- */
+    .card-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 3rem 2rem 2rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+    }
+    .card-tag { font-size: 0.44rem; letter-spacing: 0.55em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+    .card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 300; }
+    .card-detail { font-size: 0.5rem; letter-spacing: 0.08em; color: rgba(240,236,228,0.4); margin-top: 0.3rem; font-style: italic; }
+
+    .card-meta {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.3s 0.05s, transform 0.3s 0.05s;
+    }
+    .collection-card:hover .card-meta { opacity: 1; transform: translateY(0); }
+    .meta-badge {
+      font-size: 0.42rem; letter-spacing: 0.22em; text-transform: uppercase;
+      padding: 0.28rem 0.65rem;
+      border: 1px solid rgba(201,168,76,0.2);
+      color: rgba(240,236,228,0.5);
+      background: rgba(0,0,0,0.4);
+    }
+    .meta-badge.gold { border-color: rgba(201,168,76,0.5); color: var(--gold); }
+
+    .card-price { font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(240,236,228,0.5); margin-top: 0.9rem; }
+    .card-cta {
+      display: inline-block; margin-top: 0.9rem;
+      font-size: 0.46rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border-bottom: 1px solid var(--gold-dim); padding-bottom: 2px;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.3s 0.1s, transform 0.3s 0.1s;
+    }
+    .collection-card:hover .card-cta { opacity: 1; transform: translateY(0); }
+
+    /* ---- QUICK VIEW MODAL ---- */
+    .qv-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s;
+      backdrop-filter: blur(6px);
+    }
+    .qv-backdrop.open { opacity: 1; pointer-events: all; }
+    .qv-panel {
+      width: min(700px, 92vw); max-height: 90vh; overflow-y: auto;
+      background: #0d0d0d; border: 1px solid rgba(201,168,76,0.2);
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      transform: translateY(20px); transition: transform 0.35s;
+    }
+    .qv-backdrop.open .qv-panel { transform: translateY(0); }
+    .qv-visual {
+      position: relative; min-height: 400px;
+      display: flex; align-items: flex-end; justify-content: center; overflow: hidden;
+    }
+    .qv-content {
+      padding: 2.5rem 2rem; border-left: 1px solid rgba(201,168,76,0.1);
+      display: flex; flex-direction: column; gap: 1.2rem; position: relative;
+    }
+    .qv-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; color: rgba(240,236,228,0.4);
+      font-size: 1.1rem; cursor: pointer; transition: color 0.2s;
+    }
+    .qv-close:hover { color: var(--gold); }
+    .qv-tag { font-size: 0.44rem; letter-spacing: 0.55em; text-transform: uppercase; color: var(--gold); }
+    .qv-name { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 300; line-height: 1.1; }
+    .qv-price { font-size: 0.68rem; letter-spacing: 0.15em; color: rgba(240,236,228,0.6); }
+    .qv-specs { display: flex; flex-direction: column; gap: 0.6rem; }
+    .qv-spec-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 1px solid rgba(201,168,76,0.07); padding-bottom: 0.55rem; font-size: 0.5rem;
+    }
+    .qv-spec-label { letter-spacing: 0.3em; text-transform: uppercase; color: rgba(240,236,228,0.3); }
+    .qv-spec-val { color: rgba(240,236,228,0.75); font-style: italic; }
+    .qv-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .qv-badge {
+      font-size: 0.42rem; letter-spacing: 0.25em; text-transform: uppercase;
+      padding: 0.32rem 0.75rem; border: 1px solid rgba(201,168,76,0.3); color: var(--gold);
+    }
+    .qv-cta {
+      display: block; margin-top: 0.5rem; text-align: center;
+      font-size: 0.52rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--black); background: var(--gold);
+      padding: 0.9rem 1.8rem; text-decoration: none; transition: opacity 0.3s;
+    }
+    .qv-cta:hover { opacity: 0.85; }
+
+    /* ---- COMPARE DRAWER ---- */
+    .compare-drawer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(10,10,10,0.97); border-top: 1px solid rgba(201,168,76,0.25);
+      backdrop-filter: blur(16px); padding: 1.5rem 5%;
+      display: flex; align-items: center; gap: 2rem;
+      transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .compare-drawer.open { transform: translateY(0); }
+    .compare-slots { display: flex; gap: 1.5rem; flex: 1; }
+    .compare-slot {
+      flex: 1; max-width: 220px;
+      border: 1px solid rgba(201,168,76,0.2); padding: 0.8rem 1rem;
+      display: flex; align-items: center; gap: 0.8rem; min-height: 60px;
+    }
+    .compare-slot-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 300; flex: 1; }
+    .compare-slot-line { font-size: 0.42rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+    .compare-slot-empty { font-size: 0.46rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(240,236,228,0.2); }
+    .compare-slot-remove {
+      background: none; border: none; color: rgba(240,236,228,0.25);
+      cursor: pointer; font-size: 0.9rem; transition: color 0.2s; line-height: 1;
+    }
+    .compare-slot-remove:hover { color: var(--gold); }
+    .compare-actions { display: flex; gap: 1rem; align-items: center; }
+    .btn-compare {
+      font-size: 0.5rem; letter-spacing: 0.35em; text-transform: uppercase;
+      border: 1px solid var(--gold); color: var(--gold); background: none;
+      padding: 0.7rem 1.6rem; cursor: pointer; transition: background 0.3s, color 0.3s;
+    }
+    .btn-compare:hover:not(:disabled) { background: var(--gold); color: var(--black); }
+    .btn-compare:disabled { opacity: 0.3; cursor: default; }
+    .btn-compare-clear {
+      font-size: 0.46rem; letter-spacing: 0.3em; text-transform: uppercase;
+      background: none; border: none; color: rgba(240,236,228,0.3);
+      cursor: pointer; transition: color 0.2s;
+    }
+    .btn-compare-clear:hover { color: var(--white); }
+
+    /* ---- COMPARE MODAL ---- */
+    .cmp-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 300;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      overflow-y: auto; display: flex; align-items: flex-start; justify-content: center;
+      padding: 4rem 3%;
+    }
+    .cmp-backdrop.open { opacity: 1; pointer-events: all; }
+    .cmp-panel {
+      width: 100%; max-width: 1100px; background: #0d0d0d;
+      border: 1px solid rgba(201,168,76,0.15); padding: 4rem; position: relative;
+    }
+    .cmp-close {
+      position: absolute; top: 1.4rem; right: 1.4rem;
+      background: none; border: none; color: rgba(240,236,228,0.35);
+      font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
+    }
+    .cmp-close:hover { color: var(--gold); }
+    .cmp-title { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 300; margin-bottom: 3rem; }
+    .cmp-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid rgba(201,168,76,0.07); }
+    .cmp-row.header { border-bottom: 1px solid rgba(201,168,76,0.2); }
+    .cmp-cell { padding: 1.2rem 1.2rem; font-size: 0.72rem; color: rgba(240,236,228,0.65); }
+    .cmp-cell.label { color: rgba(240,236,228,0.28); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.6rem; }
+    .cmp-cell.head-name { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--white); }
+    .cmp-cell.price-cell { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+  <div class="gold-lines-bg"></div>
+
+  <div class="page-header">
+    <p class="section-label">The Full Range</p>
+    <h1 class="section-title">Our <em>Collections</em></h1>
+  </div>
+
+  <section class="collections-body" style="position:relative;z-index:1;">
+
+    <div class="filter-wrap reveal">
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="signature">Signature Line</button>
+        <button class="filter-btn" data-filter="executive">Executive Series</button>
+        <button class="filter-btn" data-filter="blacklabel">Black Label</button>
+      </div>
+      <p class="compare-hint">Hover a card · click <span>⇄</span> to compare</p>
+    </div>
+
+    <div class="collections-grid" id="collectionsGrid">
+
+      <!-- THE OBSIDIAN -->
+      <div class="collection-card" data-line="signature"
+           data-name="The Obsidian" data-tag="Signature Line"
+           data-detail="Single-breasted · Notch lapel · Two-button"
+           data-fabric="Super 150s Wool" data-for="Boardroom · City" data-lead="10–12 weeks"
+           data-price="From £ 3,200">
+        <div class="card-bg bg-sig-1"></div>
+        <div class="card-texture tex-herringbone"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M62 0 L44 58 L10 86 L4 200 L38 200 L38 420 L182 420 L182 200 L216 200 L210 86 L176 58 L158 0" fill="white"/>
+          <path d="M158 0 L146 30 L138 26 L110 70 L110 148 L132 165 L182 200" fill="#ccc"/>
+          <path d="M62 0 L74 30 L82 26 L110 70 L110 148 L88 165 L38 200" fill="#d8d8d8"/>
+          <path d="M138 26 L128 40 L118 34 L110 42 L102 34 L92 40 L82 26" fill="#aaa"/>
+          <path d="M110 70 L105 88 L108 158 L110 168 L112 158 L115 88 Z" fill="#777"/>
+          <circle cx="110" cy="188" r="3.5" fill="#999"/>
+          <circle cx="110" cy="207" r="3.5" fill="#999"/>
+          <path d="M48 128 L70 126 L70 134 L48 136 Z" fill="white" opacity="0.4"/>
+          <path d="M52 124 L68 122 L65 130 L58 132 Z" fill="#c9a84c" opacity="0.55"/>
+        </svg>
+        <div class="card-overlay overlay-sig"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Signature Line</p>
+          <h3 class="card-name">The Obsidian</h3>
+          <p class="card-detail">Single-breasted · Notch lapel · Two-button</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Super 150s Wool</span>
+            <span class="meta-badge">Boardroom · City</span>
+            <span class="meta-badge">10–12 weeks</span>
+          </div>
+          <p class="card-price">From £ 3,200</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+      <!-- THE MIDNIGHT -->
+      <div class="collection-card" data-line="signature"
+           data-name="The Midnight" data-tag="Signature Line"
+           data-detail="Single-breasted · Slim peak · One-button"
+           data-fabric="Wool-Cashmere Blend" data-for="Evening · Theatre" data-lead="10–12 weeks"
+           data-price="From £ 3,500">
+        <div class="card-bg bg-sig-2"></div>
+        <div class="card-texture tex-pinstripe"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M62 0 L44 58 L10 86 L4 200 L38 200 L38 420 L182 420 L182 200 L216 200 L210 86 L176 58 L158 0" fill="white"/>
+          <path d="M158 0 L150 26 L164 42 L148 56 L112 72 L110 148 L136 165 L182 200" fill="#c4c4c4"/>
+          <path d="M62 0 L70 26 L56 42 L72 56 L108 72 L110 148 L84 165 L38 200" fill="#d4d4d4"/>
+          <path d="M150 26 L140 38 L130 30 L110 40 L90 30 L80 38 L70 26" fill="#aaa"/>
+          <path d="M110 72 L106 86 L108 158 L110 166 L112 158 L114 86 Z" fill="#555"/>
+          <rect x="104" y="118" width="12" height="2.5" rx="1" fill="#c9a84c" opacity="0.8"/>
+          <circle cx="110" cy="194" r="4" fill="#999"/>
+          <path d="M48 128 L70 126 L70 134 L48 136 Z" fill="white" opacity="0.35"/>
+        </svg>
+        <div class="card-overlay overlay-sig"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Signature Line</p>
+          <h3 class="card-name">The Midnight</h3>
+          <p class="card-detail">Single-breasted · Slim peak · One-button</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Wool-Cashmere Blend</span>
+            <span class="meta-badge">Evening · Theatre</span>
+            <span class="meta-badge">10–12 weeks</span>
+          </div>
+          <p class="card-price">From £ 3,500</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+      <!-- THE STERLING -->
+      <div class="collection-card" data-line="executive"
+           data-name="The Sterling" data-tag="Executive Series"
+           data-detail="Double-breasted · Peak lapel · Six-button"
+           data-fabric="Super 120s Wool" data-for="Boardroom · Conference" data-lead="12–14 weeks"
+           data-price="From £ 2,800">
+        <div class="card-bg bg-exec-1"></div>
+        <div class="card-texture tex-chalkstripe"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M55 0 L36 62 L8 92 L2 205 L36 205 L36 420 L184 420 L184 205 L218 205 L212 92 L184 62 L165 0" fill="white"/>
+          <path d="M165 0 L154 22 L170 38 L154 52 L122 74 L118 148 L142 168 L184 205" fill="#b8b8b8"/>
+          <path d="M165 0 L154 22 L144 18 L118 64 L118 148 L142 168 L184 205" fill="#c8c8c8"/>
+          <path d="M55 0 L66 22 L50 38 L66 52 L98 74 L102 148 L78 168 L36 205" fill="#ccc"/>
+          <path d="M55 0 L66 22 L76 18 L102 64 L102 148 L78 168 L36 205" fill="#d8d8d8"/>
+          <path d="M98 74 L122 74 L120 205 L100 205 Z" fill="#ccc" opacity="0.6"/>
+          <path d="M154 22 L144 36 L134 28 L110 36 L86 28 L76 36 L66 22" fill="#a0a0a0"/>
+          <circle cx="104" cy="155" r="3" fill="#888"/><circle cx="116" cy="155" r="3" fill="#888"/>
+          <circle cx="104" cy="174" r="3" fill="#888"/><circle cx="116" cy="174" r="3" fill="#888"/>
+          <circle cx="104" cy="193" r="3" fill="#888"/><circle cx="116" cy="193" r="3" fill="#888"/>
+          <path d="M46 128 L68 126 L68 136 L46 138 Z" fill="white" opacity="0.35"/>
+          <path d="M48 124 L66 122 L64 129 L55 132 Z" fill="#c9a84c" opacity="0.5"/>
+        </svg>
+        <div class="card-overlay overlay-exec"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Executive Series</p>
+          <h3 class="card-name">The Sterling</h3>
+          <p class="card-detail">Double-breasted · Peak lapel · Six-button</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Super 120s Wool</span>
+            <span class="meta-badge">Boardroom · Conference</span>
+            <span class="meta-badge">12–14 weeks</span>
+          </div>
+          <p class="card-price">From £ 2,800</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+      <!-- THE CONSUL -->
+      <div class="collection-card" data-line="executive"
+           data-name="The Consul" data-tag="Executive Series"
+           data-detail="Double-breasted · Structured shoulder · Four-button"
+           data-fabric="Flannel Wool" data-for="Diplomacy · Occasion" data-lead="12–14 weeks"
+           data-price="From £ 3,000">
+        <div class="card-bg bg-exec-2"></div>
+        <div class="card-texture tex-houndstooth"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M50 0 L28 65 L4 98 L0 210 L36 210 L36 420 L184 420 L184 210 L220 210 L216 98 L192 65 L170 0" fill="white"/>
+          <path d="M170 0 L158 24 L174 42 L158 56 L126 78 L120 152 L144 172 L184 210" fill="#b4b4b4"/>
+          <path d="M170 0 L158 24 L148 20 L120 68 L120 152 L144 172 L184 210" fill="#c2c2c2"/>
+          <path d="M50 0 L62 24 L46 42 L62 56 L94 78 L100 152 L76 172 L36 210" fill="#c8c8c8"/>
+          <path d="M50 0 L62 24 L72 20 L100 68 L100 152 L76 172 L36 210" fill="#d4d4d4"/>
+          <path d="M94 78 L126 78 L122 208 L98 208 Z" fill="#ccc" opacity="0.5"/>
+          <path d="M158 24 L148 38 L136 30 L110 40 L84 30 L72 38 L62 24" fill="#9a9a9a"/>
+          <circle cx="102" cy="162" r="3.5" fill="#888"/><circle cx="118" cy="162" r="3.5" fill="#888"/>
+          <circle cx="102" cy="183" r="3.5" fill="#888"/><circle cx="118" cy="183" r="3.5" fill="#888"/>
+          <path d="M150 174 L174 172 L174 180 L150 182 Z" fill="white" opacity="0.3"/>
+          <path d="M46 130 L68 128 L68 136 L46 138 Z" fill="white" opacity="0.3"/>
+        </svg>
+        <div class="card-overlay overlay-exec"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Executive Series</p>
+          <h3 class="card-name">The Consul</h3>
+          <p class="card-detail">Double-breasted · Structured shoulder · Four-button</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Flannel Wool</span>
+            <span class="meta-badge">Diplomacy · Occasion</span>
+            <span class="meta-badge">12–14 weeks</span>
+          </div>
+          <p class="card-price">From £ 3,000</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+      <!-- THE SOVEREIGN -->
+      <div class="collection-card" data-line="blacklabel"
+           data-name="The Sovereign" data-tag="Black Label"
+           data-detail="Dinner jacket · Shawl collar · Silk lapels"
+           data-fabric="Silk-Wool Blend" data-for="Black Tie · Gala" data-lead="14–16 weeks"
+           data-price="From £ 4,500">
+        <div class="card-bg bg-bl-1"></div>
+        <div class="card-texture tex-gridweave"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 420" fill="none">
+          <path d="M62 0 L44 58 L10 86 L4 200 L38 200 L38 420 L182 420 L182 200 L216 200 L210 86 L176 58 L158 0" fill="white"/>
+          <path d="M158 0 L146 24 L130 42 L116 62 L112 148 L138 168 L182 200" fill="#e0e0e0"/>
+          <path d="M158 0 L146 24 L136 36 L116 62 L112 148 L138 168 L182 200" fill="#d0d0d0"/>
+          <path d="M62 0 L74 24 L90 42 L104 62 L108 148 L82 168 L38 200" fill="#d8d8d8"/>
+          <path d="M62 0 L74 24 L84 36 L104 62 L108 148 L82 168 L38 200" fill="#c8c8c8"/>
+          <path d="M136 36 L116 62 L104 62 L84 36 L110 20 Z" fill="#bbb"/>
+          <path d="M98 44 L110 52 L122 44 L126 52 L110 58 L94 52 Z" fill="#111" opacity="0.7"/>
+          <circle cx="110" cy="52" r="3" fill="#222" opacity="0.7"/>
+          <line x1="110" y1="200" x2="110" y2="420" stroke="#c9a84c" stroke-width="2" opacity="0.25"/>
+          <circle cx="110" cy="184" r="3" fill="#c9a84c" opacity="0.8"/>
+          <circle cx="110" cy="198" r="3" fill="#c9a84c" opacity="0.8"/>
+          <path d="M48 130 L70 128 L70 136 L48 138 Z" fill="white" opacity="0.4"/>
+        </svg>
+        <div class="card-overlay overlay-bl"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Black Label</p>
+          <h3 class="card-name">The Sovereign</h3>
+          <p class="card-detail">Dinner jacket · Shawl collar · Silk lapels</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Silk-Wool Blend</span>
+            <span class="meta-badge">Black Tie · Gala</span>
+            <span class="meta-badge">14–16 weeks</span>
+          </div>
+          <p class="card-price">From £ 4,500</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+      <!-- THE IMPERIAL -->
+      <div class="collection-card" data-line="blacklabel"
+           data-name="The Imperial" data-tag="Black Label"
+           data-detail="Morning coat · Cutaway front · Hand-rolled lapels"
+           data-fabric="Barathea Wool" data-for="Morning Occasion · Ceremony" data-lead="16–20 weeks"
+           data-price="From £ 5,200">
+        <div class="card-bg bg-bl-2"></div>
+        <div class="card-texture tex-silk"></div>
+        <div class="card-shimmer"></div>
+        <div class="card-corner tl"></div><div class="card-corner br"></div>
+        <button class="compare-badge" title="Compare">⇄</button>
+        <svg class="suit-icon" viewBox="0 0 220 460" fill="none">
+          <path d="M65 0 L48 55 L12 82 L8 185 L40 185 L38 250 L28 460 L100 460 L110 290 L120 460 L192 460 L182 250 L180 185 L212 185 L208 82 L172 55 L155 0" fill="white"/>
+          <path d="M155 0 L144 26 L158 44 L142 60 L112 80 L110 185" fill="#d2d2d2"/>
+          <path d="M155 0 L144 26 L134 20 L110 62 L110 185" fill="#c0c0c0"/>
+          <path d="M65 0 L76 26 L62 44 L78 60 L108 80 L110 185" fill="#ccc"/>
+          <path d="M65 0 L76 26 L86 20 L110 62 L110 185" fill="#bbb"/>
+          <path d="M144 26 L134 38 L122 32 L110 40 L98 32 L86 38 L76 26" fill="#a0a0a0"/>
+          <path d="M104 40 L110 32 L116 40 L113 72 L107 72 Z" fill="#c9a84c" opacity="0.45"/>
+          <path d="M96 80 L110 92 L124 80 L122 185 L98 185 Z" fill="#e0e0e0" opacity="0.4"/>
+          <circle cx="110" cy="185" r="4" fill="#aaa"/>
+          <path d="M44 128 L66 126 L66 134 L44 136 Z" fill="white" opacity="0.4"/>
+          <line x1="100" y1="255" x2="100" y2="460" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+        </svg>
+        <div class="card-overlay overlay-bl"></div>
+        <button class="card-quickview">Quick View</button>
+        <div class="card-info">
+          <p class="card-tag">Black Label</p>
+          <h3 class="card-name">The Imperial</h3>
+          <p class="card-detail">Morning coat · Cutaway front · Hand-rolled lapels</p>
+          <div class="card-meta">
+            <span class="meta-badge gold">Barathea Wool</span>
+            <span class="meta-badge">Morning Occasion · Ceremony</span>
+            <span class="meta-badge">16–20 weeks</span>
+          </div>
+          <p class="card-price">From £ 5,200</p>
+          <a href="bespoke.html" class="card-cta">Commission →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- QUICK VIEW MODAL -->
+  <div class="qv-backdrop" id="qvBackdrop">
+    <div class="qv-panel">
+      <div class="qv-visual" id="qvVisual"></div>
+      <div class="qv-content">
+        <button class="qv-close" id="qvClose">✕</button>
+        <p class="qv-tag" id="qvTag"></p>
+        <h2 class="qv-name" id="qvName"></h2>
+        <p class="qv-price" id="qvPrice"></p>
+        <div class="qv-specs" id="qvSpecs"></div>
+        <div class="qv-badges" id="qvBadges"></div>
+        <a href="bespoke.html" class="qv-cta">Commission This Suit →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE DRAWER -->
+  <div class="compare-drawer" id="compareDrawer">
+    <div class="compare-slots">
+      <div class="compare-slot" id="slot0"><p class="compare-slot-empty">Select a suit</p></div>
+      <div class="compare-slot" id="slot1"><p class="compare-slot-empty">Select a suit</p></div>
+    </div>
+    <div class="compare-actions">
+      <button class="btn-compare" id="btnCompare" disabled>Compare</button>
+      <button class="btn-compare-clear" id="btnClear">Clear</button>
+    </div>
+  </div>
+
+  <!-- COMPARE MODAL -->
+  <div class="cmp-backdrop" id="cmpBackdrop">
+    <div class="cmp-panel">
+      <button class="cmp-close" id="cmpClose">✕</button>
+      <h2 class="cmp-title">Side-by-Side</h2>
+      <div id="cmpGrid"></div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    // FILTER
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.collection-card').forEach(c =>
+          c.classList.toggle('hidden', f !== 'all' && c.dataset.line !== f));
+      });
+    });
+
+    // QUICK VIEW
+    const qvBackdrop = document.getElementById('qvBackdrop');
+    function openQV(card) {
+      const d = card.dataset;
+      document.getElementById('qvTag').textContent   = d.tag;
+      document.getElementById('qvName').textContent  = d.name;
+      document.getElementById('qvPrice').textContent = d.price;
+      const vis = document.getElementById('qvVisual');
+      vis.innerHTML = '';
+      const bg  = card.querySelector('.card-bg').cloneNode(true);
+      const tex = card.querySelector('.card-texture').cloneNode(true);
+      const svg = card.querySelector('.suit-icon').cloneNode(true);
+      [bg, tex].forEach(el => { el.style.cssText = 'position:absolute;inset:0;'; vis.appendChild(el); });
+      svg.style.cssText = 'width:70%;position:relative;z-index:2;opacity:0.38;align-self:flex-end;';
+      vis.appendChild(svg);
+      document.getElementById('qvSpecs').innerHTML = `
+        <div class="qv-spec-row"><span class="qv-spec-label">Cut</span><span class="qv-spec-val">${d.detail}</span></div>
+        <div class="qv-spec-row"><span class="qv-spec-label">Fabric</span><span class="qv-spec-val">${d.fabric}</span></div>
+        <div class="qv-spec-row"><span class="qv-spec-label">Best For</span><span class="qv-spec-val">${d.for}</span></div>
+        <div class="qv-spec-row"><span class="qv-spec-label">Lead Time</span><span class="qv-spec-val">${d.lead}</span></div>
+      `;
+      document.getElementById('qvBadges').innerHTML =
+        `<span class="qv-badge">${d.tag}</span><span class="qv-badge">${d.lead}</span>`;
+      qvBackdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeQV() { qvBackdrop.classList.remove('open'); document.body.style.overflow = ''; }
+    document.getElementById('qvClose').addEventListener('click', closeQV);
+    qvBackdrop.addEventListener('click', e => { if (e.target === qvBackdrop) closeQV(); });
+    document.querySelectorAll('.card-quickview').forEach(btn => {
+      btn.addEventListener('click', e => { e.stopPropagation(); openQV(btn.closest('.collection-card')); });
+    });
+
+    // COMPARE
+    let compareList = [];
+    const drawer = document.getElementById('compareDrawer');
+    const btnCompare = document.getElementById('btnCompare');
+
+    function updateDrawer() {
+      for (let i = 0; i < 2; i++) {
+        const slot = document.getElementById('slot' + i);
+        const item = compareList[i];
+        slot.innerHTML = item
+          ? `<div style="flex:1"><p class="compare-slot-line">${item.dataset.tag}</p><p class="compare-slot-name">${item.dataset.name}</p></div>
+             <button class="compare-slot-remove" data-idx="${i}">✕</button>`
+          : `<p class="compare-slot-empty">Select a suit</p>`;
+      }
+      drawer.classList.toggle('open', compareList.length > 0);
+      btnCompare.disabled = compareList.length < 2;
+      drawer.querySelectorAll('.compare-slot-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = parseInt(btn.dataset.idx);
+          compareList[i].classList.remove('compare-selected');
+          compareList[i].querySelector('.compare-badge').classList.remove('selected');
+          compareList.splice(i, 1);
+          updateDrawer();
+        });
+      });
+    }
+
+    document.querySelectorAll('.compare-badge').forEach(badge => {
+      badge.addEventListener('click', e => {
+        e.stopPropagation();
+        const card = badge.closest('.collection-card');
+        const idx  = compareList.indexOf(card);
+        if (idx !== -1) {
+          compareList.splice(idx, 1);
+          card.classList.remove('compare-selected');
+          badge.classList.remove('selected');
+        } else {
+          if (compareList.length >= 2) return;
+          compareList.push(card);
+          card.classList.add('compare-selected');
+          badge.classList.add('selected');
+        }
+        updateDrawer();
+      });
+    });
+
+    document.getElementById('btnClear').addEventListener('click', () => {
+      compareList.forEach(c => {
+        c.classList.remove('compare-selected');
+        c.querySelector('.compare-badge').classList.remove('selected');
+      });
+      compareList = [];
+      updateDrawer();
+    });
+
+    // COMPARE MODAL
+    const cmpBackdrop = document.getElementById('cmpBackdrop');
+    btnCompare.addEventListener('click', () => {
+      if (compareList.length < 2) return;
+      const [a, b] = compareList.map(c => c.dataset);
+      const rows = [
+        ['', a.name, b.name],
+        ['Line', a.tag, b.tag],
+        ['Cut', a.detail, b.detail],
+        ['Fabric', a.fabric, b.fabric],
+        ['Best For', a.for, b.for],
+        ['Lead Time', a.lead, b.lead],
+        ['Price', a.price, b.price],
+      ];
+      document.getElementById('cmpGrid').innerHTML = rows.map((r, i) => `
+        <div class="cmp-row ${i === 0 ? 'header' : ''}">
+          <div class="cmp-cell label">${r[0]}</div>
+          <div class="cmp-cell ${i === 0 ? 'head-name' : i === 6 ? 'price-cell' : ''}">${r[1]}</div>
+          <div class="cmp-cell ${i === 0 ? 'head-name' : i === 6 ? 'price-cell' : ''}">${r[2]}</div>
+        </div>`).join('');
+      cmpBackdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+    function closeCmp() { cmpBackdrop.classList.remove('open'); document.body.style.overflow = ''; }
+    document.getElementById('cmpClose').addEventListener('click', closeCmp);
+    cmpBackdrop.addEventListener('click', e => { if (e.target === cmpBackdrop) closeCmp(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeQV(); closeCmp(); } });
+  </script>
+</body>
+</html>

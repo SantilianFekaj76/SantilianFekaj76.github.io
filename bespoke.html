@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bespoke — Harrow & Black</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .bespoke-intro {
+      padding: 4rem 5% 7rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7rem;
+      align-items: center;
+    }
+    .bespoke-intro p {
+      font-size: 0.78rem;
+      line-height: 2.1;
+      color: rgba(240,236,228,0.5);
+      margin-bottom: 1.2rem;
+    }
+
+    /* Options grid */
+    .options-section {
+      padding: 5rem 5% 7rem;
+      background: var(--dark);
+    }
+    .options-section .section-title { margin-bottom: 3rem; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      border: 1px solid rgba(201,168,76,0.1);
+    }
+    .option-item {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid rgba(201,168,76,0.08);
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .option-item:last-child { border-right: none; }
+    .option-item:hover { background: rgba(201,168,76,0.04); }
+    .option-icon {
+      width: 2.5rem; height: 2.5rem;
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .option-icon svg { width: 1rem; height: 1rem; stroke: var(--gold); fill: none; }
+    .option-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.7rem;
+    }
+    .option-desc {
+      font-size: 0.6rem;
+      line-height: 1.85;
+      color: rgba(240,236,228,0.38);
+    }
+
+    /* Visual box */
+    .bespoke-visual {
+      position: relative;
+      aspect-ratio: 3/4;
+    }
+    .bespoke-box {
+      position: absolute; inset: 0;
+      border: 1px solid rgba(201,168,76,0.14);
+      background: linear-gradient(135deg, var(--dark2), var(--dark));
+      overflow: hidden;
+    }
+    .bespoke-box::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 18px, rgba(201,168,76,0.025) 18px, rgba(201,168,76,0.025) 19px);
+    }
+    .bespoke-box-accent {
+      position: absolute;
+      top: -1.5rem; right: -1.5rem;
+      width: 55%; height: 55%;
+      border-top: 1px solid rgba(201,168,76,0.25);
+      border-right: 1px solid rgba(201,168,76,0.25);
+    }
+    .bespoke-suit {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55%; opacity: 0.08;
+    }
+    .bespoke-num {
+      position: absolute; top: 2rem; left: 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 7rem; color: var(--gold); opacity: 0.06; line-height: 1;
+    }
+
+    /* CTA strip */
+    .bespoke-cta {
+      padding: 6rem 5%;
+      text-align: center;
+    }
+    .bespoke-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+    .bespoke-cta h2 em { font-style: italic; color: var(--gold); }
+    .bespoke-cta p {
+      font-size: 0.72rem;
+      color: rgba(240,236,228,0.4);
+      line-height: 1.9;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+    .bespoke-cta-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .bespoke-cta-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 0 auto 3rem;
+      max-width: 520px;
+    }
+    .cta-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+    .cta-step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold);
+      opacity: 0.8;
+      line-height: 1;
+    }
+    .cta-step-label {
+      font-size: 0.45rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(240,236,228,0.35);
+    }
+    .cta-step-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(201,168,76,0.3), rgba(201,168,76,0.1));
+      margin: 0 1rem;
+      margin-bottom: 1.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="gold-lines-bg"></div>
+
+  <div class="page-header">
+    <p class="section-label">Made for You</p>
+    <h1 class="section-title"><em>Bespoke</em> Tailoring</h1>
+  </div>
+
+  <!-- INTRO -->
+  <section class="bespoke-intro">
+    <div class="reveal">
+      <p class="section-label">The Commission</p>
+      <h2 class="section-title">A Suit Unlike<br><em>Any Other</em></h2>
+      <div class="gold-rule"></div>
+      <p>A Harrow & Black commission is unlike anything you will find ready-made. It is a collaboration — your vision, our craft — resulting in a garment that fits no one else on earth.</p>
+      <p>From the choice of cloth to the angle of the lapel, every decision is yours. Our tailors are guides, not gatekeepers; we are here to translate your instincts into something permanent.</p>
+      <a href="contact.html" class="btn-primary" style="margin-top:1rem;">Begin Your Commission</a>
+    </div>
+    <div class="bespoke-visual reveal">
+      <div class="bespoke-box">
+        <div class="bespoke-num">B</div>
+        <svg class="bespoke-suit" viewBox="0 0 200 380" fill="none">
+          <path d="M70 0 L55 55 L15 78 L8 195 L35 195 L35 380 L165 380 L165 195 L192 195 L185 78 L145 55 L130 0 L112 28 L100 18 L88 28 Z" fill="white"/>
+          <path d="M88 28 L100 18 L112 28 L117 78 L83 78 Z" fill="black"/>
+        </svg>
+      </div>
+      <div class="bespoke-box-accent"></div>
+    </div>
+  </section>
+
+  <!-- OPTIONS -->
+  <section class="options-section">
+    <div class="reveal" style="margin-bottom:3rem;">
+      <p class="section-label">Your Choices</p>
+      <h2 class="section-title">Every Detail,<br><em>Yours</em></h2>
+    </div>
+    <div class="options-grid">
+      <div class="option-item reveal">
+        <div class="option-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3 class="option-title">Fabric Mill</h3>
+        <p class="option-desc">Choose from over 3,000 cloths sourced from the world's finest mills — Loro Piana, Scabal, Holland & Sherry.</p>
+      </div>
+      <div class="option-item reveal">
+        <div class="option-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="option-title">Lapel Style</h3>
+        <p class="option-desc">Notch, peak, or shawl — the lapel defines the character of a suit. We shape it to frame your presence.</p>
+      </div>
+      <div class="option-item reveal">
+        <div class="option-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3 class="option-title">Lining & Detail</h3>
+        <p class="option-desc">Silk linings in over sixty colours. Monograms, contrast stitching, and hand-sewn buttonholes available.</p>
+      </div>
+      <div class="option-item reveal">
+        <div class="option-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h3 class="option-title">Construction</h3>
+        <p class="option-desc">Every garment is full-canvas, hand-padded. The suit moves with you, not against you — now and for decades to come.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bespoke-cta">
+    <div class="reveal bespoke-cta-inner">
+      <p class="section-label">Begin Here</p>
+      <h2>Ready to Begin<br>Your <em>Journey?</em></h2>
+      <div class="gold-rule" style="margin:2rem auto;"></div>
+      <p>Schedule a private consultation at one of our ateliers. No obligation — only conversation. Our tailors will guide you through every step, from first fitting to final delivery.</p>
+      <div class="bespoke-cta-steps">
+        <div class="cta-step">
+          <span class="cta-step-num">01</span>
+          <span class="cta-step-label">Consultation</span>
+        </div>
+        <div class="cta-step-line"></div>
+        <div class="cta-step">
+          <span class="cta-step-num">02</span>
+          <span class="cta-step-label">Measurements</span>
+        </div>
+        <div class="cta-step-line"></div>
+        <div class="cta-step">
+          <span class="cta-step-num">03</span>
+          <span class="cta-step-label">Fittings</span>
+        </div>
+        <div class="cta-step-line"></div>
+        <div class="cta-step">
+          <span class="cta-step-num">04</span>
+          <span class="cta-step-label">Delivery</span>
+        </div>
+      </div>
+      <a href="contact.html" class="btn-primary">Book a Private Consultation</a>
+    </div>
+  </section>
+
+  <script src="shared.js"></script>
+</body>
+</html>
