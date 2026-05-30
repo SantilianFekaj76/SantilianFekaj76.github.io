@@ -345,6 +345,70 @@
     .cmp-cell.label { color: rgba(240,236,228,0.28); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.6rem; }
     .cmp-cell.head-name { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--white); }
     .cmp-cell.price-cell { color: var(--gold); font-size: 0.8rem; letter-spacing: 0.1em; }
+
+    /* ---- MOBILE OVERRIDES ---- */
+    @media (max-width: 768px) {
+      /* Filter bar: show buttons, stack vertically */
+      .filter-wrap {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+        padding: 1rem 5% !important;
+        top: 60px !important;
+      }
+      .filter-row {
+        gap: 0.5rem !important;
+        flex-wrap: wrap !important;
+      }
+      .filter-btn {
+        font-size: 0.48rem !important;
+        padding: 0.5rem 1rem !important;
+        letter-spacing: 0.2em !important;
+      }
+      .compare-hint { display: none !important; }
+
+      /* Collections grid: single column */
+      .collections-grid {
+        grid-template-columns: 1fr !important;
+        margin-top: 1.5rem !important;
+      }
+      .collection-card { aspect-ratio: 3/4 !important; }
+      .card-name {
+        font-size: 1.6rem !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+      }
+      /* Always show meta & cta on mobile (no hover) */
+      .card-meta { opacity: 1 !important; transform: none !important; }
+      .card-cta  { opacity: 1 !important; transform: none !important; }
+
+      /* Quick view modal: single column */
+      .qv-panel { grid-template-columns: 1fr !important; width: 96vw !important; }
+      .qv-visual { min-height: 220px !important; }
+      .qv-content {
+        border-left: none !important;
+        border-top: 1px solid rgba(201,168,76,0.1) !important;
+        padding: 1.5rem !important;
+      }
+
+      /* Compare drawer: stack */
+      .compare-drawer {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        padding: 1.2rem 5% !important;
+        align-items: stretch !important;
+      }
+      .compare-slots { flex-direction: column !important; gap: 0.8rem !important; }
+      .compare-slot  { max-width: 100% !important; }
+      .compare-actions { justify-content: center !important; }
+
+      /* Compare modal */
+      .cmp-panel { padding: 2rem 1.2rem !important; }
+      .cmp-row   { grid-template-columns: 1fr 1fr !important; }
+      .cmp-cell.label { display: none !important; }
+      .collections-body { padding: 2rem 5% 5rem !important; }
+    }
   </style>
 </head>
 <body>
