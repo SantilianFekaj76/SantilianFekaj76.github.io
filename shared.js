@@ -5,12 +5,16 @@
   const navHTML = `
   <nav>
     <a href="index.html" class="nav-logo">Harrow <span>&</span> Black</a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="collections.html" ${currentPage === 'collections.html' ? 'class="active"' : ''}>Collections</a></li>
       <li><a href="bespoke.html"     ${currentPage === 'bespoke.html'     ? 'class="active"' : ''}>Bespoke</a></li>
       <li><a href="atelier.html"     ${currentPage === 'atelier.html'     ? 'class="active"' : ''}>Atelier</a></li>
+      <li><a href="contact.html">Book Consultation</a></li>
     </ul>
     <a href="contact.html" class="nav-cta">Book Consultation</a>
+    <div class="nav-hamburger" id="navHamburger">
+      <span></span><span></span><span></span>
+    </div>
   </nav>`;
 
   const footerHTML = `
@@ -107,6 +111,22 @@
   </svg>`;
   const bg = document.querySelector('.gold-lines-bg');
   if (bg) bg.innerHTML = kintsugiSVG;
+
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('navHamburger');
+  const navLinks = document.getElementById('navLinks');
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        navLinks.classList.remove('open');
+      });
+    });
+  }
 
   // Scroll reveal
   const observer = new IntersectionObserver(entries => {
