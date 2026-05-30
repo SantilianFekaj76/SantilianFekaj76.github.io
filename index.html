@@ -278,6 +278,21 @@
       .stat-number {
         font-size: 2rem !important;
       }
+
+      /* SCROLL HINT: pin to bottom of hero, don't let it float mid-screen */
+      .scroll-hint {
+        position: absolute !important;
+        bottom: 1.8rem !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+      }
+
+      /* SUIT ICONS: contain within card, don't bleed out top */
+      .suit-icon {
+        max-height: 85% !important;
+        width: auto !important;
+        object-fit: contain !important;
+      }
     }
   </style>
 </head>
