@@ -204,6 +204,81 @@
       color: rgba(240,236,228,0.45);
       margin-top: 0.3rem;
     }
+
+    /* ---- MOBILE OVERRIDES (inside inline style to beat specificity) ---- */
+    @media (max-width: 768px) {
+      /* NAV: prevent logo/hamburger overlap */
+      nav {
+        padding: 1.2rem 5% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+      }
+      .nav-logo {
+        font-size: 1rem !important;
+        letter-spacing: 0.15em !important;
+        white-space: nowrap !important;
+      }
+
+      /* HERO: shrink title so it never clips */
+      .hero-title {
+        font-size: clamp(2.6rem, 12vw, 4rem) !important;
+        line-height: 1 !important;
+      }
+      .hero-eyebrow {
+        font-size: 0.5rem !important;
+        letter-spacing: 0.35em !important;
+      }
+      .hero-content {
+        padding: 0 1.2rem !important;
+      }
+      .hero-actions {
+        flex-direction: column !important;
+        gap: 0.9rem !important;
+        width: 100% !important;
+      }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-ghost {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 0.9rem 1.5rem !important;
+      }
+
+      /* COLLECTIONS SECTION: header stack, single column cards */
+      .collections-preview {
+        padding: 4rem 5% !important;
+      }
+      .collections-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1.2rem !important;
+        margin-bottom: 2rem !important;
+      }
+      .collections-grid {
+        grid-template-columns: 1fr !important;
+        gap: 3px !important;
+      }
+      .collection-card {
+        aspect-ratio: 4/3 !important;
+      }
+      .card-name {
+        font-size: 1.3rem !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+      }
+
+      /* STATS: 2-column grid, no horizontal overflow */
+      .stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        padding: 3rem 5% !important;
+        width: 100% !important;
+        overflow: hidden !important;
+      }
+      .stat-number {
+        font-size: 2rem !important;
+      }
+    }
   </style>
 </head>
 <body>
