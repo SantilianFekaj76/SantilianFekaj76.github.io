@@ -77,6 +77,18 @@
       padding-bottom: 2px;
       transition: color 0.3s;
     }
+
+    /* ---- MOBILE OVERRIDES ---- */
+    @media (max-width: 768px) {
+      .locations {
+        grid-template-columns: 1fr !important;
+        padding: 2rem 5% 5rem !important;
+        gap: 1px !important;
+      }
+      .location-card {
+        padding: 2.5rem 1.8rem !important;
+      }
+    }
   </style>
 </head>
 <body>
